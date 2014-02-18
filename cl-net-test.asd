@@ -6,6 +6,7 @@
   :author "Alexandr Popolitov <popolit@itep.ru>"
   :license "GPL"
   :depends-on (#:clesh #:cl-ppcre #:cl-interpol #:iterate #:cl-smtp
+		       #:cl-yaclyaml #:esrap-liquid
 		       #:cl-cron)
   :components ((:file "package")
                (:file "cl-net-test")))
