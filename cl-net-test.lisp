@@ -43,9 +43,16 @@
 		     (return t)))))
 
 (defun net-test-mail (fail)
-  (cl-smtp:send-email *email-host* *admin-email* *admin-email*
-		      #?"[$(*net-name*)-NET-FAIL] $((net-test-name fail))"
-		      (format nil "~a" (net-test-details fail))))
+  (apply #'cl-smtp:send-email `(,*email-host* ,*admin-email* ,*admin-email*
+					      ,#?"[$(*net-name*)-NET-FAIL] $((net-test-name fail))"
+					      ,(format nil "~a" (net-test-details fail))
+					      ,@(let ((login (gethash "login" *net-test-config*)))
+						     `(:authentication (,login
+									,(gethash "pwd" *net-test-config*))))
+					      ,@(let ((ssl (gethash "ssl" *net-test-config*)))
+						     (cond ((string= ssl "tls") `(:ssl :tls))
+							   ((eq ssl nil) nil)
+							   (t `(:ssl t)))))))
 
 (defun make-mailer-on-new-fail (sym-func args)
   (let (prev-fail)
