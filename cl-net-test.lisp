@@ -107,7 +107,8 @@
   whitespace? c!-5-cron-months whitespace?
   (let* ((pre-rest (times character))
 	 (rest (split (literal-string "\\s+") (concatenate 'string pre-rest))))
-    (list (intern (string-upcase (car rest))) (cdr rest)
+    (list (intern (string-upcase (car rest)) (find-package (literal-string "CL-NET-TEST")))
+	  (cdr rest)
 	  (list c!-1 c!-2 c!-3 c!-4 c!-5))))
 	       
 (defun parse-test-spec (string)
