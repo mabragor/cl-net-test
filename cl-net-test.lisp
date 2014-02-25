@@ -5,7 +5,7 @@
 (cl-interpol:enable-interpol-syntax)
 (enable-read-macro-tokens)
 
-(define-yaml-config read-net-test-config ("~/.cl-net-test.rc" *net-test-config*)
+(define-yaml-config read-net-test-config ("~/.cl-net-test.d/config.yml" *net-test-config*)
   (*admin-email* "root@example.com")
   (*email-host* "mail.example.com")
   (*net-name* "MY")
