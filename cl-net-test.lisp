@@ -36,21 +36,25 @@
 (defun ping-test (name ips-field)
   "Succeeds, if all IPs listed in IPS-FIELD of config are pinging, NET-TEST-FAILs otherwise"
   (iter (for ip in (gethash ips-field *net-test-config*))
-	(if (not (pings-p ip))
-	    (collect ip into failed-ips))
-	(finally (if failed-ips
-		     (error 'net-test-fail
-			    :name name
-			    :details failed-ips)
-		     (return t)))))
+	(destructuring-bind (host ip) (if (consp ip)
+					  ip
+					  (list ip ip))
+	  (if (not (pings-p ip))
+	      (collect host into failed-hosts))
+	  (finally (if failed-hosts
+		       (error 'net-test-fail
+			      :name name
+			      :details failed-hosts)
+		       (return t))))))
 
 (defun net-test-mail (fail)
   (apply #'cl-smtp:send-email `(,*email-host* ,*admin-email* ,*admin-email*
 					      ,#?"[$(*net-name*)-NET-FAIL] $((net-test-name fail))"
 					      ,(format nil "~a" (net-test-details fail))
 					      ,@(let ((login (gethash "login" *net-test-config*)))
-						     `(:authentication (,login
-									,(gethash "pwd" *net-test-config*))))
+						     (if login
+							 `(:authentication (,login
+									    ,(gethash "pwd" *net-test-config*)))))
 					      ,@(let ((ssl (gethash "ssl" *net-test-config*)))
 						     (cond ((string= ssl "tls") `(:ssl :tls))
 							   ((eq ssl nil) nil)
