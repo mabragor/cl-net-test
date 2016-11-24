@@ -20,6 +20,8 @@
 	     (< (parse-integer fourth) 256)))
       nil))
 
+
+
 (defun pings-p (ip)
   (assert (ip-addr-p ip))
   (multiple-value-bind (out err err-code)
